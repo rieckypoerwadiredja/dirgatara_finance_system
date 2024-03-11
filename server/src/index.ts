@@ -4,6 +4,7 @@ import cors from "cors";
 import { schema } from "./Schema";
 import { Users } from "./Entities/Users";
 import { createConnection } from "typeorm";
+import { BankBri } from "./Entities/BankBri";
 
 const main = async () => {
   await createConnection({
@@ -12,8 +13,8 @@ const main = async () => {
     username: "root",
     password: "admin",
     logging: true,
-    synchronize: false,
-    entities: [Users],
+    synchronize: true,
+    entities: [Users, BankBri],
   });
 
   const app = express();

@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_ALL_USERS } from "../Graphql/Queries";
-import { DELETE_USER } from "../Graphql/Mutations";
+import { GET_ALL_USERS } from "../../Graphql/Queries";
+import { DELETE_USER } from "../../Graphql/Mutations";
 
 function GetAllUsers() {
   const { data, loading, error, refetch } = useQuery(GET_ALL_USERS);
@@ -49,7 +49,7 @@ function GetAllUsers() {
               {deleteLoading ? "Deleting..." : "Delete"}
             </button>
 
-            {deleteError && <p>Error deleting user: {deleteError.message}</p>}
+            {deleteError && <p>Error deleting BRI: {deleteError.message}</p>}
           </div>
         ))
       )}

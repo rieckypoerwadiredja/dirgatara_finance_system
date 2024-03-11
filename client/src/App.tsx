@@ -1,10 +1,10 @@
 import React from "react";
 import "./App.css";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-// Component
-import CreateUser from "./component/CreateUser";
-import GetAllUsers from "./component/GetAllUsers";
-import UpdateUser from "./component/UpdateUser";
+// Pages
+import Admin from "./pages/Admin";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import BRI from "./pages/BRI";
 
 const client = new ApolloClient({
   uri: "http://localhost:3001/graphql",
@@ -14,9 +14,12 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <CreateUser />
-      <UpdateUser />
-      <GetAllUsers />
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Admin />} path="/admin" />
+          <Route element={<BRI />} path="/bri" />
+        </Routes>
+      </BrowserRouter>
     </ApolloProvider>
   );
 }

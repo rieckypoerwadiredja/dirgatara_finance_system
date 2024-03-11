@@ -42,3 +42,50 @@ export const DELETE_USER = gql`
     }
   }
 `;
+export const ADD_BRI = gql`
+  mutation addBri(
+    $noLC: String!
+    $noPo: String!
+    $suplier: String!
+    $program: String!
+    $nominal_RP: Float!
+    $nominal_USD: Float!
+    $nilai_akseptasi_RP: Float!
+    $nilai_akseptasi_USD: Float!
+    $tanggal_terbit: String!
+    $tanggal_expire: String!
+    $rating: Int!
+  ) {
+    addBri(
+      noLC: $noLC
+      noPo: $noPo
+      suplier: $suplier
+      program: $program
+      nominal_RP: $nominal_RP
+      nominal_USD: $nominal_USD
+      nilai_akseptasi_RP: $nilai_akseptasi_RP
+      nilai_akseptasi_USD: $nilai_akseptasi_USD
+      tanggal_terbit: $tanggal_terbit
+      tanggal_expire: $tanggal_expire
+      rating: $rating
+    ) {
+      noLC
+      noPo
+      program
+      message {
+        sucessfull
+        message
+      }
+    }
+  }
+`;
+export const DELETE_BRI = gql`
+  mutation deleteBri($id: Int!) {
+    deleteBri(id: $id) {
+      message {
+        message
+        sucessfull
+      }
+    }
+  }
+`;

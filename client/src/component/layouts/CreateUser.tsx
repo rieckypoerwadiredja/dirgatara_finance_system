@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import React, { useState } from "react";
-import { CREATE_USER } from "../Graphql/Mutations";
-import { GET_ALL_USERS } from "../Graphql/Queries";
+import { CREATE_USER } from "../../Graphql/Mutations";
+import { GET_ALL_USERS } from "../../Graphql/Queries";
 
 function CreateUser() {
   const [name, setName] = useState("");
