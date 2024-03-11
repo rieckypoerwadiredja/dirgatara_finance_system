@@ -15,6 +15,10 @@ function UpdateUser() {
   const handleUpdateUser = () => {
     updateUser({ variables: { username, oldPassword, newPassword } })
       .then(() => {
+        setUsername("");
+        setOldPassword("");
+        setNewPassword("");
+        alert("Password Berhasil diganti");
         // Tindakan yang perlu dilakukan setelah berhasil membuat pengguna
       })
       .catch((error) => {

@@ -18,5 +18,8 @@ export class Users extends BaseEntity {
   username!: string;
 
   @Column()
+  role!: string;
+
+  @Column()
   password!: string;
 }

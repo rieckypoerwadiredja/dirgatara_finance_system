@@ -13,6 +13,16 @@ function GetAllUsers() {
       },
     });
 
+  const handleDeleteUser = (userId: string) => {
+    // Tampilkan konfirmasi sebelum menghapus
+    const confirmed = window.confirm(
+      "Apakah Anda yakin ingin menghapus pengguna ini?"
+    );
+    if (confirmed) {
+      deleteUser({ variables: { id: userId } });
+    }
+  };
+
   if (loading) {
     return <p>Loading..</p>;
   }
@@ -23,20 +33,26 @@ function GetAllUsers() {
 
   return (
     <div>
-      {data.getAllUsers.map((userData: any) => (
-        <div key={userData.id}>
-          <p>Name: {userData.name}</p>
-          <p>Username: {userData.username}</p>
-          <button
-            onClick={() => deleteUser({ variables: { id: userData.id } })}
-            disabled={deleteLoading}
-          >
-            {deleteLoading ? "Deleting..." : "Delete"}
-          </button>
+      {data.getAllUsers.length === 0 ? (
+        <p>No users found.</p>
+      ) : (
+        data.getAllUsers.map((userData: any) => (
+          <div key={userData.id}>
+            <p>Name: {userData.name}</p>
+            <p>Username: {userData.username}</p>
+            <p>Role: {userData.role}</p>
 
-          {deleteError && <p>Error deleting user: {deleteError.message}</p>}
-        </div>
-      ))}
+            <button
+              onClick={() => handleDeleteUser(userData.id)}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? "Deleting..." : "Delete"}
+            </button>
+
+            {deleteError && <p>Error deleting user: {deleteError.message}</p>}
+          </div>
+        ))
+      )}
     </div>
   );
 }
