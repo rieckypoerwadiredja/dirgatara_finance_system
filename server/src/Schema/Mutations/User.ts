@@ -69,7 +69,11 @@ export const UPDATE_USER_PASSWORD = {
     const { username, oldPassword, newPassword } = args;
 
     // Validasi input
-    const validationError = validateUserPassword(oldPassword, newPassword);
+    const validationError = validateUserPassword(
+      username,
+      oldPassword,
+      newPassword
+    );
     if (validationError) {
       throw new Error(validationError); // Jika ada kesalahan validasi, lemparkan error
     }

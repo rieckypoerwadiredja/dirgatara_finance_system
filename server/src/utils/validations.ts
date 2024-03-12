@@ -24,19 +24,20 @@ export function validateUserInput(
   return null; // Tidak ada kesalahan validasi
 }
 export const validateUserPassword = (
+  username: string,
   oldPassword: string,
   newPassword: string
 ): string | null => {
-  if (!oldPassword || !newPassword) {
-    return "Both old password and new password are required";
+  if (!username || !oldPassword || !newPassword) {
+    return "Semua item harus terisi";
   }
 
   if (oldPassword === newPassword) {
-    return "New password must be different from old password";
+    return "Password baru harus berbeda dengan password lama";
   }
 
   if (newPassword.length < 8) {
-    return "New password must be at least 8 characters long";
+    return "Password baru harus berisi minimal 8 karakter";
   }
 
   // Tambahkan validasi tambahan sesuai kebutuhan

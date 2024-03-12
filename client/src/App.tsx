@@ -1,5 +1,5 @@
 import React from "react";
-import "./App.css";
+import "./index.css";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 // Pages
 import Admin from "./pages/Admin";

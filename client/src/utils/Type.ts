@@ -1,3 +1,5 @@
+// TODO Tipe data untuk formulir
+
 export type BankBriType = {
   noLC: string;
   noPo: string;
@@ -12,4 +14,28 @@ export type BankBriType = {
   rating: number;
 
   [key: string]: number | string;
+};
+
+export type UserType = {
+  name: string;
+  username: string;
+  password: string;
+  role: string;
+
+  [key: string]: number | string;
+};
+
+export type UpdateUserType = {
+  username: string;
+  newPassword: string;
+  oldPassword: string;
+
+  [key: string]: number | string;
+};
+
+export type SelectType = {
+  name: string;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: string[];
 };
