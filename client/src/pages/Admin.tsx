@@ -7,8 +7,10 @@ import GetAllUsers from "../component/layouts/GetAllUsers";
 function Admin() {
   return (
     <>
-      <CreateUser />
-      <UpdateUser />
+      <div className="flex">
+        <CreateUser />
+        <UpdateUser />
+      </div>
       <GetAllUsers />
     </>
   );

@@ -44,51 +44,100 @@ export const validateUserPassword = (
 
   return null; // Kembalikan null jika validasi berhasil
 };
-
-export function validateBankBriInput(
-  noLC: string,
-  noPo: string,
-  suplier: string,
+export function validateBankBGInput(
+  noRef: number,
+  pekerjaan: string,
+  tipe: string,
   program: string,
-  nominal_RP: number,
-  nominal_USD: number,
-  nilai_akseptasi_RP: number,
-  nilai_akseptasi_USD: number,
-  tanggal_terbit: string,
-  tanggal_expire: string,
-  rating: string
+  kode_program: string,
+  vauta_asli: number,
+  jenis_vauta_asli: string,
+  tgl_terbit: string,
+  tgl_berlaku: string,
+  tgl_jatuh_tempo: string,
+  bank: string,
+  deposito_giro: number,
+  jenis: string,
+  norek: number,
+  tgl_pembukuan: string
 ): string | null {
   if (
-    !noLC ||
-    !noPo ||
-    !suplier ||
+    !noRef ||
+    !pekerjaan ||
+    !tipe ||
     !program ||
-    !tanggal_terbit ||
-    !tanggal_expire ||
-    !rating
+    !kode_program ||
+    !vauta_asli ||
+    !jenis_vauta_asli ||
+    !tgl_terbit ||
+    !tgl_berlaku ||
+    !tgl_jatuh_tempo ||
+    !bank ||
+    !deposito_giro ||
+    !jenis ||
+    !norek ||
+    !tgl_pembukuan
   ) {
     return "Semua item harus terisi";
   }
 
+  const allowedTipe = [
+    "Jaminan Penawaran",
+    "Jaminan Pelaksanaan",
+    "Jaminan Uang Muka",
+    "Jaminan Pemeliharaan",
+  ];
+  if (!allowedTipe.includes(tipe)) {
+    return "Tipe harus salah satu dari: Jaminan Penawaran, Jaminan Pelaksanaan, Jaminan Uang Muka, Jaminan Pemeliharaan";
+  }
+
+  if (jenis_vauta_asli.length > 5) {
+    return "Panjang karakter Nama Mata Uang tidak boleh lebih dari 5";
+  }
+
+  if (jenis_vauta_asli !== jenis_vauta_asli.toUpperCase()) {
+    return "Nama Mata Uang harus menggunakan huruf besar semua";
+  }
+  const isValidDate = (dateString: string): boolean => {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    return dateString.match(dateRegex) !== null;
+  };
+
   if (
-    isNaN(nominal_RP) ||
-    isNaN(nominal_USD) ||
-    isNaN(nilai_akseptasi_RP) ||
-    isNaN(nilai_akseptasi_USD)
+    !isValidDate(tgl_terbit) ||
+    !isValidDate(tgl_berlaku) ||
+    !isValidDate(tgl_jatuh_tempo)
   ) {
-    return "Nominal harus berupa angka";
+    return "Format tanggal tidak valid, gunakan format YYYY-MM-DD";
   }
 
-  const tanggalTerbit = new Date(tanggal_terbit);
-  const tanggalExpire = new Date(tanggal_expire);
-  const today = new Date();
+  const terbitDate = new Date(tgl_terbit);
+  const berlakuDate = new Date(tgl_berlaku);
+  const jatuhTempoDate = new Date(tgl_jatuh_tempo);
 
-  if (tanggalTerbit <= today) {
-    return "Tanggal terbit harus setelah hari ini";
+  if (berlakuDate < terbitDate) {
+    return "Tanggal berlaku harus setelah tanggal terbit";
   }
 
-  if (tanggalExpire <= tanggalTerbit) {
-    return "Tanggal kadaluarsa harus setelah tanggal terbit";
+  if (jatuhTempoDate <= berlakuDate) {
+    return "Tanggal jatuh tempo harus setelah tanggal berlaku";
+  }
+
+  if (bank.length > 5) {
+    return "Panjang karakter Bank tidak boleh lebih dari 5";
+  }
+
+  if (bank !== bank.toUpperCase()) {
+    return "Bank harus menggunakan huruf besar semua";
+  }
+
+  if (String(norek).length < 10 || String(norek).length > 16) {
+    return "Nomor rekening harus terdiri dari 10-16 digit";
+  }
+
+  const allowedJenis = ["Provisi", "Margin Deposit"];
+  if (!allowedJenis.includes(jenis)) {
+    return "Jenis harus salah satu dari: Provisi, Margin Deposit";
   }
 
   return null; // Tidak ada kesalahan validasi

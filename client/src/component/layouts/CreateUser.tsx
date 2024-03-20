@@ -17,6 +17,7 @@ function CreateUser() {
   return (
     <div className="createUser">
       <Form
+        title="Create User"
         sucessAlert
         error={error}
         submit={createUser}

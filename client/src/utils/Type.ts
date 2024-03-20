@@ -36,6 +36,28 @@ export type UpdateUserType = {
 export type SelectType = {
   name: string;
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: any;
   options: string[];
+  customOption: boolean;
 };
+
+interface StatusDetail {
+  count: number;
+  status: string;
+}
+
+export interface TotalSummary {
+  totalActive: StatusDetail;
+  totalWarn60: StatusDetail;
+  totalWarn30: StatusDetail;
+  totalExpire: StatusDetail;
+}
+
+export interface Program {
+  id: number;
+  jenis: string;
+  nilai_bg: number;
+  tgl_berlaku: string;
+  tgl_jatuh_tempo: string;
+  bank?: string; // Tambahkan jika diperlukan untuk jenis program tertentu
+}

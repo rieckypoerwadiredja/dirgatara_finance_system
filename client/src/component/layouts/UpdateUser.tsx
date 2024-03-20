@@ -13,8 +13,8 @@ function UpdateUser() {
 
   return (
     <div className="updateUser">
-      <h1>Update User</h1>
       <Form
+        title="Update Password"
         sucessAlert
         error={error}
         submit={updateUser}

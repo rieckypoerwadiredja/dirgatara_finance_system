@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Select from "../elements/Select";
-import { Input } from "@material-tailwind/react";
+import { Button, Input, Typography } from "@material-tailwind/react";
 import { useMutation } from "@apollo/client";
 
 interface FormProps {
@@ -9,6 +9,7 @@ interface FormProps {
   error: boolean | Error | undefined; // Specify the type for error
   submit: (form: Record<string, any>) => Promise<any>; // Specify the type for submit
   sucessAlert: boolean;
+  title: string;
 }
 
 function Form(props: FormProps) {
@@ -18,6 +19,7 @@ function Form(props: FormProps) {
     error,
     submit,
     sucessAlert = false,
+    title,
   } = props; // Destructure submit from props
   const [form, setForm] = useState<Record<string, any>>(defaultVariables);
   const [message, setMessage] = useState("");
@@ -53,30 +55,38 @@ function Form(props: FormProps) {
   };
 
   return (
-    <div>
-      {formFields.map((field, index) => (
-        <React.Fragment key={index}>
-          {field.type === "select" ? (
-            <Select
-              name={field.name}
-              value={form[field.name].toString()}
-              onChange={handleInputChange}
-              options={field.options || []}
-            />
-          ) : (
-            <Input
-              type={field.type}
-              name={field.name}
-              id={field.name}
-              label={field.label}
-              value={form[field.name]}
-              crossOrigin=""
-              onChange={handleInputChange}
-            />
-          )}
-        </React.Fragment>
-      ))}
-      <button onClick={(e) => handleFormSubmit(e)}>Submit</button>
+    <div className="w-3/4 mx-auto flex flex-col gap-y-5">
+      <Typography variant="h2" placeholder="">
+        {title}
+      </Typography>
+      <div className="flex flex-wrap w-full justify-evenly">
+        {formFields.map((field, index) => (
+          <div key={index} className="w-[40%] my-2">
+            {field.type === "select" ? (
+              <Select
+                customOption={field.customOption}
+                name={field.name}
+                value={form[field.name]}
+                onChange={handleInputChange}
+                options={field.options || []}
+              />
+            ) : (
+              <Input
+                type={field.type}
+                name={field.name}
+                id={field.name}
+                label={field.label}
+                value={form[field.name]}
+                crossOrigin=""
+                onChange={handleInputChange}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+      <Button color="green" placeholder="" onClick={(e) => handleFormSubmit(e)}>
+        Submit
+      </Button>
       {error && <p>Error submitting form: {message}</p>}
     </div>
   );
