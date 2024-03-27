@@ -111,13 +111,15 @@ function GetAllBG() {
       };
 
       data?.getAllBGs.forEach((item: any) => {
-        const tgl_berlaku = formatDate(item.tgl_berlaku.toString());
-        const tgl_jatuh_tempo = formatDate(item.tgl_jatuh_tempo.toString());
+        const tgl_berlaku = new Date(item.tgl_berlaku);
+        const tgl_jatuh_tempo = new Date(item.tgl_jatuh_tempo);
 
-        const sixtyDaysInMs = 60 * 24 * 60 * 60 * 1000; // 60 hari dalam milidetik
+        const satuHari = 24 * 60 * 60 * 1000; // Satu hari dalam milidetik
         const selisihMs = tgl_jatuh_tempo.getTime() - tgl_berlaku.getTime();
+        const selisihHari = Math.floor(selisihMs / satuHari); // Mengonversi selisih dalam milidetik menjadi selisih dalam hari
 
-        if (selisihMs > sixtyDaysInMs) {
+        if (selisihHari > 60) {
+          // Periksa selisih dalam hitungan hari
           if (item && item.tipe) {
             const jenis = item.tipe.toString();
             if (jenis === "Jaminan Penawaran") {
@@ -160,16 +162,16 @@ function GetAllBG() {
           // Tambahkan nilai vauta_asli ke total per bank
           switch (data.bank) {
             case "BRI":
-              vautaAsliByBank.BRI += data.vauta_asli;
+              vautaAsliByBank.BRI += parseInt(data.vauta_asli);
               break;
             case "BNI":
-              vautaAsliByBank.BNI += data.vauta_asli;
+              vautaAsliByBank.BNI += parseInt(data.vauta_asli);
               break;
             case "EXM":
-              vautaAsliByBank.EXM += data.vauta_asli;
+              vautaAsliByBank.EXM += parseInt(data.vauta_asli);
               break;
             case "MDR":
-              vautaAsliByBank.MDR += data.vauta_asli;
+              vautaAsliByBank.MDR += parseInt(data.vauta_asli);
               break;
             default:
               break;
@@ -206,7 +208,9 @@ function GetAllBG() {
           data.vauta_asli &&
           vautaAsliByBankAndType[data.bank]?.[data.tipe] !== undefined
         ) {
-          vautaAsliByBankAndType[data.bank][data.tipe] += data.vauta_asli;
+          vautaAsliByBankAndType[data.bank][data.tipe] += parseInt(
+            data.vauta_asli
+          );
         }
       });
 

@@ -81,6 +81,26 @@ export function validateBankBGInput(
     return "Semua item harus terisi";
   }
 
+  if (
+    typeof noRef !== "string" ||
+    typeof pekerjaan !== "string" ||
+    typeof tipe !== "string" ||
+    typeof program !== "string" ||
+    typeof kode_program !== "string" ||
+    typeof vauta_asli !== "string" ||
+    typeof jenis_vauta_asli !== "string" ||
+    typeof tgl_terbit !== "string" ||
+    typeof tgl_berlaku !== "string" ||
+    typeof tgl_jatuh_tempo !== "string" ||
+    typeof bank !== "string" ||
+    typeof deposito_giro !== "string" ||
+    typeof jenis !== "string" ||
+    typeof norek !== "string" ||
+    typeof tgl_pembukuan !== "string"
+  ) {
+    return "Semua item harus berupa string";
+  }
+
   const allowedTipe = [
     "Jaminan Penawaran",
     "Jaminan Pelaksanaan",

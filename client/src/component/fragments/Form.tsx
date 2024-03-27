@@ -84,10 +84,11 @@ function Form(props: FormProps) {
           </div>
         ))}
       </div>
+      {error && <p>Error submitting form: {message}</p>}
+
       <Button color="green" placeholder="" onClick={(e) => handleFormSubmit(e)}>
         Submit
       </Button>
-      {error && <p>Error submitting form: {message}</p>}
     </div>
   );
 }

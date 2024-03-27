@@ -1,14 +1,21 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GET_ALL_BG } from "../../../Graphql/Queries";
-import { DELETE_BRI } from "../../../Graphql/Mutations";
-import { IconButton } from "@material-tailwind/react";
+import { DELETE_BRI, UPDATE_BG } from "../../../Graphql/Mutations";
+import { Button, IconButton } from "@material-tailwind/react";
 import { CiTrash } from "react-icons/ci";
+import { MdEdit } from "react-icons/md";
+import { RxDropdownMenu } from "react-icons/rx";
+import Form from "../../fragments/Form";
+import { BG_UPDATE_DEFAULT } from "../../../utils/DefaultVariables";
+import { FaWindowClose } from "react-icons/fa";
+import { UPDATE_BG_FORM_FIELD } from "../../../utils/FormFields";
 function TableAllBG() {
   const { data, loading, error, refetch } = useQuery(GET_ALL_BG);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const [idEdit, setIdEdit] = useState<any>({ ...BG_UPDATE_DEFAULT });
   const [deleteBri, { loading: deleteLoading, error: deleteError }] =
     useMutation(DELETE_BRI, {
       onCompleted: () => {
@@ -16,6 +23,10 @@ function TableAllBG() {
         refetch();
       },
     });
+
+  const [updateBG, { error: errorUpdate }] = useMutation(UPDATE_BG, {
+    refetchQueries: [{ query: GET_ALL_BG }], // Menggunakan refetchQueries untuk memperbarui data setelah mutasi selesai
+  });
   const getStatus = (tglBerlaku: string, tglJatuhTempo: string): string => {
     const now = new Date();
     const tglBerlakuDate = new Date(tglBerlaku);
@@ -47,6 +58,30 @@ function TableAllBG() {
     );
     if (confirmed) {
       deleteBri({ variables: { id: briId } })
+        .then()
+        .catch((err) => {
+          if (err.networkError) {
+            // Tangani kesalahan jaringan (misalnya, koneksi ke server terputus)
+            setMessage(err.networkError.result.errors[0].message);
+          } else if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+            // Tangani kesalahan dari server GraphQL
+            setMessage(err.graphQLErrors[0].message);
+          } else {
+            // Tangani kesalahan lainnya
+            console.error("Error creating user:", err);
+            setMessage("An unexpected error occurred.");
+          }
+        });
+    }
+  };
+
+  const handleUpdateBG = (BG_id: number) => {
+    // Tampilkan konfirmasi sebelum menghapus
+    const confirmed = window.confirm(
+      "Apakah Anda yakin ingin mengupdate BG ini?"
+    );
+    if (confirmed) {
+      updateBG({ variables: { id: BG_id } })
         .then()
         .catch((err) => {
           if (err.networkError) {
@@ -114,6 +149,9 @@ function TableAllBG() {
               No Ref
             </th>
             <th scope="col" className="px-6 py-4 border-2">
+              Kode Program
+            </th>
+            <th scope="col" className="px-6 py-4 border-2">
               Pekerjaan
             </th>
             <th scope="col" className="px-6 py-4 border-2">
@@ -145,6 +183,11 @@ function TableAllBG() {
                     {program.noRef}
                   </span>
                 </td>
+                <td className="px-6 py-4 border-2 overflow-hidden">
+                  <span className="max-w-full !whitespace-pre-wrap">
+                    {program.kode_program}
+                  </span>
+                </td>
                 {/* Add other table cells here */}
                 <td className="px-6 py-4 border-2 overflow-hidden">
                   <span className="max-w-full !whitespace-pre-wrap">
@@ -162,20 +205,43 @@ function TableAllBG() {
                 <td className="px-6 py-4 border-2 overflow-hidden">
                   {getStatus(program.tgl_berlaku, program.tgl_jatuh_tempo)}
                 </td>
-                <td className="px-6 py-4 border-2 overflow-hidden">
-                  <IconButton
+                <td className="relative px-6 py-4 border-2 overflow-hidden">
+                  <Button
                     placeholder=""
-                    className="bg-transparent"
+                    className="bg-transparent w-full bg-red-50 flex gap-x-2 text-black items-center"
                     onClick={() => handleDeleteUser(program.id)}
                   >
-                    <CiTrash className="text-red-600 text-3xl" />
-                  </IconButton>
+                    <CiTrash className="text-red-600 text-3xl" /> Delete
+                  </Button>
+                  <Button
+                    placeholder=""
+                    className="bg-transparent w-full bg-orange-50 mt-2 flex gap-x-2 text-black items-center"
+                    onClick={() => setIdEdit(program)}
+                  >
+                    <MdEdit className="text-red-600 text-3xl" /> Edit
+                  </Button>
                 </td>
               </tr>
             ))
           )}
         </tbody>
       </table>
+      {idEdit !== BG_UPDATE_DEFAULT && (
+        <div className="flex max-h-[80%] overflow-scroll fixed top-1/2 left-1/2 bg-gray-100 -translate-x-1/2 -translate-y-1/2 z-50 rounded-2xl p-3 shadow-md">
+          <Form
+            title="Edit BRI BG"
+            sucessAlert
+            error={errorUpdate}
+            submit={updateBG}
+            formFields={UPDATE_BG_FORM_FIELD}
+            defaultVariables={idEdit}
+          />
+          <FaWindowClose
+            className="bg-red-300 text-2xl"
+            onClick={() => setIdEdit(BG_UPDATE_DEFAULT)}
+          />
+        </div>
+      )}
     </>
   );
 }

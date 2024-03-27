@@ -7,11 +7,29 @@ export const BG_DEFAULT = {
   tgl_terbit: "",
   tgl_jatuh_tempo: "",
   persen: 0,
-  biaya_idr: 0,
-  deposito_giro: 0,
+  biaya_idr: "",
+  deposito_giro: "",
   jenis: "",
-  norek: 0,
-  nominal_idr: 0,
+  norek: "",
+  nominal_idr: "",
+  tgl_pembukuan: "",
+};
+
+export const BG_UPDATE_DEFAULT = {
+  id: "",
+  noRef: "",
+  pekerjaan: "",
+  program: "",
+  kode_program: "",
+  idr: 0,
+  tgl_terbit: "",
+  tgl_jatuh_tempo: "",
+  persen: "",
+  biaya_idr: "",
+  deposito_giro: "",
+  jenis: "",
+  norek: "",
+  nominal_idr: "",
   tgl_pembukuan: "",
 };
 

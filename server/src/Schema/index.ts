@@ -9,6 +9,7 @@ import { GET_ALL_BANK_BG } from "./Queries/BankBG";
 import {
   CREATE_BANK_BG_MUTATION,
   DELETE_BANK_BG_MUTATION,
+  UPDATE_BANK_BG_MUTATION,
 } from "./Mutations/BankBG";
 
 const RootQuery = new GraphQLObjectType({
@@ -26,6 +27,7 @@ const RootMutation = new GraphQLObjectType({
     deleteUser: DELETE_USER_MUTATION,
     updatePassword: UPDATE_USER_PASSWORD,
     addBG: CREATE_BANK_BG_MUTATION,
+    updateBG: UPDATE_BANK_BG_MUTATION,
     deleteBG: DELETE_BANK_BG_MUTATION,
   },
 });

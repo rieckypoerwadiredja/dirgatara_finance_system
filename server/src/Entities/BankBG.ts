@@ -27,7 +27,7 @@ export class BankBG extends BaseEntity {
   kode_program!: string;
 
   @Column()
-  vauta_asli!: number;
+  vauta_asli!: string;
 
   @Column()
   jenis_vauta_asli!: string;
@@ -45,7 +45,7 @@ export class BankBG extends BaseEntity {
   bank!: string;
 
   @Column()
-  deposito_giro!: number;
+  deposito_giro!: string;
 
   @Column()
   jenis!: string;
