@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GET_ALL_BG } from "../../../Graphql/Queries";
 import CardDas from "../../fragments/CardDas";
 import { IoIosAddCircleOutline } from "react-icons/io";
@@ -17,8 +17,11 @@ import { initialStatusProgram } from "../../../utils/DefaultVariables";
 import { TotalSummary } from "../../../utils/Type";
 import { TbCaptureFilled } from "react-icons/tb";
 import { CiSettings } from "react-icons/ci";
-import { Typography } from "@material-tailwind/react";
+import { Button, Typography } from "@material-tailwind/react";
+import generatePDF from "react-to-pdf";
 function GetAllBG() {
+  const targetRef = useRef(null);
+
   const { data, loading, error, refetch } = useQuery(GET_ALL_BG);
   const [programJenisCount, setProgramJenisCount] = useState<{
     [key: string]: number;
@@ -220,6 +223,11 @@ function GetAllBG() {
       console.log(vautaAsliByBankAndType);
     }
   }, [data?.getAllBGs]);
+  const renderAfterPageContent = () => (
+    <div style={{ textAlign: "center", marginTop: "20px" }}>
+      <p>This document is computer-generated and not handcrafted.</p>
+    </div>
+  );
   if (loading) {
     return <p>Loading..</p>;
   }
@@ -256,216 +264,234 @@ function GetAllBG() {
       );
     });
   };
+  // Mendapatkan tanggal saat ini
+  const currentDate = new Date();
+  // Mengonversi tanggal ke format "dd_mm_yyyy"
+  const formattedDate = `${currentDate.getDate()}_${
+    currentDate.getMonth() + 1
+  }_${currentDate.getFullYear()}`;
+  // Nama file PDF yang akan digenerate
+  const filename = `${formattedDate}_dashboard_BG.pdf`;
   return (
     <>
-      <CardDas
-        classa={null}
-        column={false}
-        title="BG General Performance"
-        icon={<CgPerformance className="text-xl text-white" />}
+      <Button
+        placeholder=""
+        className="bg-orange-300"
+        onClick={() => generatePDF(targetRef, { filename: filename })}
       >
-        <CardComponentTypeOne
-          highlight={statusProgram.totalActive.count.toString()}
-          title="Total BG Active"
-          desc={statusProgram.totalActive.status.toString()}
-        />
-        <CardComponentTypeOne
-          highlight={statusProgram.totalExpire.count.toString()}
-          title="Total BG Active"
-          desc={statusProgram.totalExpire.status.toString()}
-        />
-        <CardComponentTypeOne
-          highlight={statusProgram.totalWarn30.count.toString()}
-          title="Total BG Active"
-          desc={statusProgram.totalWarn30.status.toString()}
-        />
-        <CardComponentTypeOne
-          highlight={statusProgram.totalWarn60.count.toString()}
-          title="Total BG Active"
-          desc={statusProgram.totalWarn60.status.toString()}
-        />
-      </CardDas>
+        Download PDF
+      </Button>
+      <div ref={targetRef}>
+        <CardDas
+          classa={null}
+          column={false}
+          title="BG General Performance"
+          icon={<CgPerformance className="text-xl text-white" />}
+        >
+          <CardComponentTypeOne
+            highlight={statusProgram.totalActive.count.toString()}
+            title="Total BG Active"
+            desc={statusProgram.totalActive.status.toString()}
+          />
+          <CardComponentTypeOne
+            highlight={statusProgram.totalExpire.count.toString()}
+            title="Total BG Active"
+            desc={statusProgram.totalExpire.status.toString()}
+          />
+          <CardComponentTypeOne
+            highlight={statusProgram.totalWarn30.count.toString()}
+            title="Total BG Active"
+            desc={statusProgram.totalWarn30.status.toString()}
+          />
+          <CardComponentTypeOne
+            highlight={statusProgram.totalWarn60.count.toString()}
+            title="Total BG Active"
+            desc={statusProgram.totalWarn60.status.toString()}
+          />
+        </CardDas>
 
-      <CardDas
-        classa={null}
-        column={false}
-        title="BG Added Recently"
-        icon={<IoIosAddCircleOutline className="text-xl text-white" />}
-      >
-        {renderPrograms()}
-      </CardDas>
+        <CardDas
+          classa={null}
+          column={false}
+          title="BG Added Recently"
+          icon={<IoIosAddCircleOutline className="text-xl text-white" />}
+        >
+          {renderPrograms()}
+        </CardDas>
 
-      <CardDas
-        classa="flex-wrap"
-        column={false}
-        title="Captured General BG"
-        icon={<TbCaptureFilled className="text-xl text-white" />}
-      >
-        <div className="w-full py-5 flex justify-around items-start">
-          <ul className="w-1/3 list-disc border-[1px] borde p-4 border-gray-700">
-            <li className="list-none font-semibold mb-2 text-black flex justify-between items-center">
-              Jaminan Agunan
-              <CiSettings className="text-2xl text-blue-300" />
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(79,39,91)]"></span>
-                Jaminan Penawaran{" "}
-              </Typography>
-              <span>{programJenisCount.Jaminan_Penawaran}</span>
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(156,78,183)]"></span>
-                Jaminan Pelaksanaan{" "}
-              </Typography>
-              <span>{programJenisCount.Jaminan_Pelaksanaan}</span>
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(196,102,229)]"></span>
-                Jaminan Uang Muka{" "}
-              </Typography>
-              <span>{programJenisCount.Jaminan_Uang_Muka}</span>
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(226,156,243)]"></span>
-                Jaminan Pemeliharaan
-              </Typography>{" "}
-              <span>{programJenisCount.Jaminan_Pemeliharaan}</span>
-            </li>
-          </ul>
-          <ul className="w-1/3 list-disc border-[1px] borde p-4 border-gray-700">
-            <li className="list-none font-semibold mb-2 text-black flex justify-between items-center">
-              Bank
-              <CiSettings className="text-2xl text-blue-300" />
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(79,39,91)]"></span>
-                Bank BRI{" "}
-              </Typography>
-              <span>{vautaAllJenisCount.BRI}</span>
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(156,78,183)]"></span>
-                Bank BNI{" "}
-              </Typography>
-              <span>{vautaAllJenisCount.BNI}</span>
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(196,102,229)]"></span>
-                Bank EXM{" "}
-              </Typography>
-              <span>{vautaAllJenisCount.EXM}</span>
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(226,156,243)]"></span>
-                Bank MDR
-              </Typography>{" "}
-              <span>{vautaAllJenisCount.MDR}</span>
-            </li>
-          </ul>
-          <ul className="w-1/3 list-disc border-[1px] borde p-4 border-gray-700">
-            <li className="list-none font-semibold mb-2 text-black flex justify-between items-center">
-              Komponent Bank Garansi
-              <CiSettings className="text-2xl text-blue-300" />
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(23,76,100)]"></span>
-                Provisi{" "}
-              </Typography>
-              <span>{programJenisCount.Provisi}</span>
-            </li>
-            <li className="flex justify-between items-center">
-              <Typography
-                className="flex items-center"
-                variant="paragraph"
-                placeholder=""
-              >
-                <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(45,152,200)]"></span>
-                Margin Deposit{" "}
-              </Typography>
-              <span>{programJenisCount.Margin_Deposit}</span>
-            </li>
-          </ul>
-        </div>
-      </CardDas>
-
-      <CardDas
-        classa={null}
-        column={false}
-        title="Captured Nilai ACtive BG"
-        icon={<TbCaptureFilled className="text-xl text-white" />}
-      >
-        <div className="w-full py-5 flex flex-wrap justify-around items-start">
-          {Object.keys(vautaAsliByBankAndType).map((bank) => (
-            <ul
-              key={bank}
-              className="!w-1/2 list-disc border-[1px] borde p-4 border-gray-700"
-            >
+        <CardDas
+          classa="flex-wrap"
+          column={false}
+          title="Captured General BG"
+          icon={<TbCaptureFilled className="text-xl text-white" />}
+        >
+          <div className="w-full py-5 flex justify-around items-start">
+            <ul className="w-1/3 list-disc border-[1px] borde p-4 border-gray-700">
               <li className="list-none font-semibold mb-2 text-black flex justify-between items-center">
-                {`Bank ${bank}`}
+                Jaminan Agunan
                 <CiSettings className="text-2xl text-blue-300" />
               </li>
-              {Object.keys(vautaAsliByBankAndType[bank]).map((tipe) => (
-                <li key={tipe} className="flex justify-between items-center">
-                  <Typography
-                    className="flex items-center"
-                    variant="paragraph"
-                    placeholder=""
-                  >
-                    <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(79,39,91)]"></span>
-                    {tipe}
-                  </Typography>
-                  <span>{vautaAsliByBankAndType[bank][tipe]}</span>
-                </li>
-              ))}
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(79,39,91)]"></span>
+                  Jaminan Penawaran{" "}
+                </Typography>
+                <span>{programJenisCount.Jaminan_Penawaran}</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(156,78,183)]"></span>
+                  Jaminan Pelaksanaan{" "}
+                </Typography>
+                <span>{programJenisCount.Jaminan_Pelaksanaan}</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(196,102,229)]"></span>
+                  Jaminan Uang Muka{" "}
+                </Typography>
+                <span>{programJenisCount.Jaminan_Uang_Muka}</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(226,156,243)]"></span>
+                  Jaminan Pemeliharaan
+                </Typography>{" "}
+                <span>{programJenisCount.Jaminan_Pemeliharaan}</span>
+              </li>
             </ul>
-          ))}
-        </div>
-      </CardDas>
+            <ul className="w-1/3 list-disc border-[1px] borde p-4 border-gray-700">
+              <li className="list-none font-semibold mb-2 text-black flex justify-between items-center">
+                Bank
+                <CiSettings className="text-2xl text-blue-300" />
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(79,39,91)]"></span>
+                  Bank BRI{" "}
+                </Typography>
+                <span>{vautaAllJenisCount.BRI}</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(156,78,183)]"></span>
+                  Bank BNI{" "}
+                </Typography>
+                <span>{vautaAllJenisCount.BNI}</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(196,102,229)]"></span>
+                  Bank EXM{" "}
+                </Typography>
+                <span>{vautaAllJenisCount.EXM}</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(226,156,243)]"></span>
+                  Bank MDR
+                </Typography>{" "}
+                <span>{vautaAllJenisCount.MDR}</span>
+              </li>
+            </ul>
+            <ul className="w-1/3 list-disc border-[1px] borde p-4 border-gray-700">
+              <li className="list-none font-semibold mb-2 text-black flex justify-between items-center">
+                Komponent Bank Garansi
+                <CiSettings className="text-2xl text-blue-300" />
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(23,76,100)]"></span>
+                  Provisi{" "}
+                </Typography>
+                <span>{programJenisCount.Provisi}</span>
+              </li>
+              <li className="flex justify-between items-center">
+                <Typography
+                  className="flex items-center"
+                  variant="paragraph"
+                  placeholder=""
+                >
+                  <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(45,152,200)]"></span>
+                  Margin Deposit{" "}
+                </Typography>
+                <span>{programJenisCount.Margin_Deposit}</span>
+              </li>
+            </ul>
+          </div>
+        </CardDas>
+
+        <CardDas
+          classa={null}
+          column={false}
+          title="Captured Nilai ACtive BG"
+          icon={<TbCaptureFilled className="text-xl text-white" />}
+        >
+          <div className="w-full py-5 flex flex-wrap justify-around items-start">
+            {Object.keys(vautaAsliByBankAndType).map((bank) => (
+              <ul
+                key={bank}
+                className="!w-1/2 list-disc border-[1px] borde p-4 border-gray-700"
+              >
+                <li className="list-none font-semibold mb-2 text-black flex justify-between items-center">
+                  {`Bank ${bank}`}
+                  <CiSettings className="text-2xl text-blue-300" />
+                </li>
+                {Object.keys(vautaAsliByBankAndType[bank]).map((tipe) => (
+                  <li key={tipe} className="flex justify-between items-center">
+                    <Typography
+                      className="flex items-center"
+                      variant="paragraph"
+                      placeholder=""
+                    >
+                      <span className="w-3 h-3 !aspect-square mr-2 !rounded-full bg-[rgb(79,39,91)]"></span>
+                      {tipe}
+                    </Typography>
+                    <span>{vautaAsliByBankAndType[bank][tipe]}</span>
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        </CardDas>
+      </div>
+      {renderAfterPageContent()}
     </>
   );
 }
